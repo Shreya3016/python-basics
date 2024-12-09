@@ -1,14 +1,41 @@
-def fizzBuzz(n):
-    for i in range(1, n + 1):
-        if i % 3 == 0 and i % 5 == 0:
-            print("FizzBuzz")
-        elif i % 3 == 0:
-            print("Fizz")
-        elif i % 5 == 0:
-            print("Buzz")
-        else:
-            print(i);
+public class StudentRank {
+    private String[] students;
+    private int[] ranks;
 
-# Example usage:
-n = 15
-fizzBuzz(n)
+    // Constructor
+    public StudentRank(String[] students, int[] ranks) {
+        this.students = students;
+        this.ranks = ranks;
+    }
+
+    // Method to get the highest-ranked student
+    public String highestRank() {
+        int maxRankIndex = 0;
+        for (int i = 1; i < ranks.length; i++) {
+            if (ranks[i] > ranks[maxRankIndex]) {
+                maxRankIndex = i;
+            }
+        }
+        return students[maxRankIndex];
+    }
+
+    // Method to get the lowest-ranked student
+    public String lowestRank() {
+        int minRankIndex = 0;
+        for (int i = 1; i < ranks.length; i++) {
+            if (ranks[i] < ranks[minRankIndex]) {
+                minRankIndex = i;
+            }
+        }
+        return students[minRankIndex];
+    }
+
+    public static void main(String[] args) {
+        String[] students = {"Taylor", "Wesley", "Jordan"};
+        int[] ranks = {1, 5, 3};
+        StudentRank sr = new StudentRank(students, ranks);
+
+        System.out.println(sr.highestRank()); // Output: Wesley
+        System.out.println(sr.lowestRank());  // Output: Taylor
+    }
+}
