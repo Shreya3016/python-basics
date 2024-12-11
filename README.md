@@ -33,18 +33,31 @@
 			Remember, the goals are to identify what has changed, suggest improvements, and spot potential issues.
 			
 	
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from config import Config
-def create_app(config_name):
-    app = Flask(__name__)
-    app.config.from_object(Config)
-    
-    db.init_app(app)
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
-    from .journal import journal as journal_blueprint
-    app.register_blueprint(journal_blueprint)
-    return app
-
-db = SQLAlchemy()
+from flask import render_template, redirect, url_for, flash, request
+from app import db
+from app.journal.models import JournalEntry
+from . import journal
+@journal.route('/new', methods=['GET', 'POST'])
+def new_entry():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        
+        if not title or not content:
+            flash('Title and content are required!', 'danger')
+            return render_template('create_entry.html')
+        
+        entry = JournalEntry(title=title, content=content)
+        
+        
+        
+        db.session.add(entry)
+        try:
+            db.session.commit()
+            flash('Your entry has been created!', 'success')
+        except Exception:
+            db.session.rollback()
+            flash('There was an error creating your entry.', 'danger')
+            
+        return redirect(url_for('main.index'))
+    return render_template('create_entry.html')
