@@ -33,16 +33,8 @@
 			Remember, the goals are to identify what has changed, suggest improvements, and spot potential issues.
 			
 	
-from flask import Blueprint
-main = Blueprint('main', __name__)
-from . import views
-from . import views, errors
-    
-    
-    if not entry:
-        return render_template('error.html', message='Entry not found'), 404
-    
-    try:
-        return render_template('entry.html', entry=entry)
-    except Exception as e:
-        return redirect(url_for('error.html', message=str(e)))
+from flask import render_template
+from . import main
+@main.app_errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
