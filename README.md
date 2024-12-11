@@ -33,14 +33,10 @@
 			Remember, the goals are to identify what has changed, suggest improvements, and spot potential issues.
 			
 	
-from flask import render_template, redirect, url_for
-from . import journal
-from app.journal.models import JournalEntry
-
-@journal.route('/<int:id>')
-def view_entry(id):
- 
-    entry = JournalEntry.query.get(id)
+from flask import Blueprint
+main = Blueprint('main', __name__)
+from . import views
+from . import views, errors
     
     
     if not entry:
