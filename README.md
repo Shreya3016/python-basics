@@ -32,7 +32,14 @@
 			
 			Remember, the goals are to identify what has changed, suggest improvements, and spot potential issues.
 				
-import os
-class Config:
-    SECRET_KEY = os.urandom(24)
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///site.db'
+import unittest
+from app.journal.models import JournalEntry
+class TestJournalEntryModel(unittest.TestCase):
+    def setUp(self):
+        self.entry = JournalEntry("Test Title", "Test Content")
+    def test_journal_entry_creatin(self):
+    def test_journal_entry_creation(self):
+        self.assertEqual(self.entry.title, "Test Title")
+        self.assertEqual(self.entry.content, "Test Content")
+    def test_journal_entry_type(self):
+        self.assertEqual(self.entry.type, "Journal")
