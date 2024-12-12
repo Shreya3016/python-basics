@@ -31,8 +31,7 @@
 			�
 			
 			Remember, the goals are to identify what has changed, suggest improvements, and spot potential issues.
-			
-	
+				
 import os
 class Config:
     SECRET_KEY = os.urandom(24)
