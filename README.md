@@ -35,21 +35,35 @@
 			Remember, the goals are to identify what has changed, suggest improvements, and spot potential issues.
 			
 	
-from flask import Flask
-from config import DevelopmentConfig
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
-def create_app():
-    app = Flask(__name__)
-    app.config.from_object(DevelopmentConfig)
-    db.init_app(app)
+from flask import request, jsonify
+from . import events
+from .models import Event
+import uuid
+@events.route('/<int:id>', methods=['DELETE'])
+def delete_event(id):
+    event = Event.get_event(id)
+    if event:
+        Event.events.remove(event)
+        return jsonify({'message': 'Event deleted'})
+    return ('Event not found', 404)
+@events.route('/', methods=['GET'])
+def get_events():
+    events = Event.get_all_events()
+    return jsonify({'events': [event.to_dict() for event in events]})
+@events.route('/<int:id>', methods=['GET'])
+def get_event(id):
+    event = Event.get_event(id)
+    return jsonify(event.to_dict()) if event else ('Event not found')
+
+@events.route('/', methods=['POST'])
+def add_event():
     
-    from .main import main as main_blueprint
+    id = str(uuid.uuid4()) if Event.events else 1
+    if not request.json or not 'name' in request.json or not 'location' in request.json:
+        return jsonify({'error': 'Missing mandatory fields: name and/or location'}), 400
+    name = request.json.get('name')
+    location = request.json.get('location')
+    event = Event(id, name, location)
     
-    app.register_blueprint(main_blueprint)
-	
-	
-    from .events import events as events_blueprint
-    
-    app.register_blueprint(events_blueprint)
-    return app
+    Event.add_event(event)
+    return jsonify({'message': 'Event added', 'event': event.to_dict()}), 201
